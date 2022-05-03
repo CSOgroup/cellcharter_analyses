@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import scanpy as sc
 import scvi
-import cellcharter as cc
+import cellchart as cc
 from time import time
 from sklearn.metrics import adjusted_rand_score
 from sklearn.decomposition import TruncatedSVD
@@ -87,14 +87,14 @@ seeds = rng.integers(low=0, high=32768, size=10)
 for i, seed in enumerate(seeds):
     scvi.settings.seed = seed
     start_scvi = time()
-    scvi.model.SCVI.setup_anndata(adata, layer="counts", categorical_covariate_keys=["group", "sample"])
+    scvi.model.SCVI.setup_anndata(adata, layer="counts", batch_key="group")
     model = scvi.model.SCVI(adata, n_latent=n_latent)
     model.train(early_stopping=True)
     adata.obsm['X_scVI'] = model.get_latent_representation(adata).astype(np.float32)
     time_scvi = time() - start_scvi
 
     start_neigh = time()
-    cc.tl.SpatialCluster.aggregate_neighbors(adata, nhood_layers, X_key='X_scVI')
+    cc.tl.SpatialCluster.aggregate_neighbors(adata, nhood_layers, X_key='X_scVI', out_key='X_cellcharter')
     time_neigh = time() - start_neigh
 
     start_cls = time()
@@ -109,9 +109,9 @@ for i, seed in enumerate(seeds):
     times[f'{sample} (clustering)'].append(time_cls)
 
     times_df = pd.DataFrame.from_dict(times, orient='index')
-    times_df.to_csv(f"/work/FAC/FBM/DBC/gciriell/spacegene/Packages/cellcharter_analyses/results/dlpfc/CellCharter/time/time_hvgs{hvgs}_nlatent{n_latent}_nhoodlayers{nhood_layers}_{'gpu' if args.gpu else 'cpu'}_combined_groupsamplebatch.csv")
+    times_df.to_csv(f"/work/FAC/FBM/DBC/gciriell/spacegene/Packages/cellcharter_analyses/results/dlpfc/CellCharter/time/time_hvgs{hvgs}_nlatent{n_latent}_nhoodlayers{nhood_layers}_{'gpu' if args.gpu else 'cpu'}_combined_groupbatch.csv")
     
-    adata.write(f"/work/FAC/FBM/DBC/gciriell/spacegene/Packages/cellcharter_analyses/results/dlpfc/CellCharter/labels/ARI_hvgs{hvgs}_nlatent{n_latent}_nhoodlayers{nhood_layers}_{'gpu' if args.gpu else 'cpu'}_combined_groupsamplebatch.h5ad")
+    adata.write(f"/work/FAC/FBM/DBC/gciriell/spacegene/Packages/cellcharter_analyses/results/dlpfc/CellCharter/labels/ARI_hvgs{hvgs}_nlatent{n_latent}_nhoodlayers{nhood_layers}_{'gpu' if args.gpu else 'cpu'}_combined_groupbatch.h5ad")
 
     for sample, n_clusters in SAMPLES.items():
         adata_sample = adata[adata.obs['sample'] == sample]
@@ -123,5 +123,5 @@ for i, seed in enumerate(seeds):
         aris[f'{sample}'].append(ari)
 
         aris_df = pd.DataFrame.from_dict(aris, orient='index')
-        aris_df.to_csv(f"/work/FAC/FBM/DBC/gciriell/spacegene/Packages/cellcharter_analyses/results/dlpfc/CellCharter/accuracy/ARI_hvgs{hvgs}_nlatent{n_latent}_nhoodlayers{nhood_layers}_{'gpu' if args.gpu else 'cpu'}_combined_groupsamplebatch.csv")
+        aris_df.to_csv(f"/work/FAC/FBM/DBC/gciriell/spacegene/Packages/cellcharter_analyses/results/dlpfc/CellCharter/accuracy/ARI_hvgs{hvgs}_nlatent{n_latent}_nhoodlayers{nhood_layers}_{'gpu' if args.gpu else 'cpu'}_combined_groupbatch.csv")
 

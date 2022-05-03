@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import scanpy as sc
 import scvi
-import cellcharter as cc
+import cellchart as cc
 from time import time
 from sklearn.metrics import adjusted_rand_score
 from sklearn.decomposition import TruncatedSVD
@@ -25,14 +25,14 @@ SAMPLES = {'151507': 7,
            '151508': 7, 
            '151509': 7, 
            '151510': 7, 
+           '151673': 7, 
+           '151674': 7, 
+           '151675': 7, 
+           '151676': 7,
            '151669': 5, 
            '151670': 5, 
            '151671': 5, 
            '151672': 5, 
-           '151673': 7, 
-           '151674': 7, 
-           '151675': 7, 
-           '151676': 7
 }
 
 hvgs = 5000
@@ -72,7 +72,7 @@ time_hvg = time() - start_hvg
 
 rng = np.random.default_rng(12345)
 seeds = rng.integers(low=0, high=32768, size=10)
-for i in seeds:
+for i in seeds[7:]:
     scvi.settings.seed = i 
     start_scvi = time()
     scvi.model.SCVI.setup_anndata(adata, layer="counts", batch_key='sample')
@@ -82,7 +82,7 @@ for i in seeds:
     time_scvi = time() - start_scvi
 
     start_neigh = time()
-    cc.tl.SpatialCluster.aggregate_neighbors(adata, nhood_layers, X_key='X_scVI')
+    cc.tl.SpatialCluster.aggregate_neighbors(adata, nhood_layers, X_key='X_scVI', out_key='X_cellcharter')
     time_neigh = time() - start_neigh
 
     start_cls = time()

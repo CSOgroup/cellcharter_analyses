@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import scanpy as sc
 import scvi
-import cellcharter as cc
+import cellchart as cc
 from time import time
 from sklearn.metrics import adjusted_rand_score
 from sklearn.decomposition import TruncatedSVD
@@ -71,7 +71,7 @@ def run(n_samples):
     model.train(early_stopping=True)
     adata.obsm['X_scVI'] = model.get_latent_representation(adata).astype(np.float32)
 
-    cc.tl.SpatialCluster.aggregate_neighbors(adata, nhood_layers, X_key='X_scVI')
+    cc.tl.SpatialCluster.aggregate_neighbors(adata, nhood_layers, X_key='X_scVI', out_key='X_cellcharter')
 
     cls = cc.tl.SpatialCluster(7, random_state=42, gpus=args.gpu)
     cls.fit(adata, X_key='X_cellcharter')

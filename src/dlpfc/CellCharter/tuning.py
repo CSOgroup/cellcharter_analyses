@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import scanpy as sc
 import scvi
-import cellcharter as cc
+import cellchart as cc
 from time import time
 from sklearn.metrics import adjusted_rand_score
 from sklearn.decomposition import TruncatedSVD
@@ -13,6 +13,7 @@ import squidpy as sq
 
 parser = argparse.ArgumentParser(description='Process some integers.')
 parser.add_argument('--gpu',  type=int, default=0)
+parser.add_argument('--sample',  type=str, default=None)
 
 args = parser.parse_args()
 
@@ -32,6 +33,9 @@ times = defaultdict(list)
 
 print('Loading data...')
     
+
+if args.sample is not None:
+    SAMPLES = {args.sample: SAMPLES[args.sample]}
 
 for sample, n_clusters in SAMPLES.items():
     for hvg in hvgs:
@@ -66,15 +70,15 @@ for sample, n_clusters in SAMPLES.items():
         for n_latent in n_latents:
             for nhood_dist in nhood_dists:
                 rng = np.random.default_rng(12345)
-                seeds = rng.integers(low=0, high=32768, size=10)
+                seeds = rng.integers(low=0, high=32768, size=5)
                 for i in seeds:
                     scvi.settings.seed = i 
                     scvi.model.SCVI.setup_anndata(adata, layer="counts")
                     model = scvi.model.SCVI(adata, n_latent=n_latent)
-                    model.train(early_stopping=True, early_stopping_patience=15, plan_kwargs=dict(lr=0.01, optimizier='AdamW'))
+                    model.train(early_stopping=True)
                     adata.obsm['X_scVI'] = model.get_latent_representation(adata).astype(np.float32)
 
-                    cc.tl.SpatialCluster.aggregate_neighbors(adata, nhood_dist, X_key='X_scVI')
+                    cc.tl.SpatialCluster.aggregate_neighbors(adata, nhood_dist, X_key='X_scVI', out_key='X_cellcharter')
                     
                     cls = cc.tl.SpatialCluster(int(n_clusters), random_state=i, gpus=args.gpu)
                     cls.fit(adata, X_key='X_cellcharter')
@@ -87,4 +91,4 @@ for sample, n_clusters in SAMPLES.items():
                 
 
                     aris_df = pd.DataFrame.from_dict(aris, orient='index')
-                    aris_df.to_csv(f"/work/FAC/FBM/DBC/gciriell/spacegene/Packages/cellcharter_analyses/results/dlpfc/CellCharter/ARI_tuning_{sample}_lr.csv")
+                    aris_df.to_csv(f"/work/FAC/FBM/DBC/gciriell/spacegene/Packages/cellcharter_analyses/results/dlpfc/CellCharter/tuning/ARI_tuning_{sample}_newhop.csv")

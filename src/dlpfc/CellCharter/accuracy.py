@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import scanpy as sc
 import scvi
-import cellcharter as cc
+import cellchart as cc
 from time import time
 from sklearn.metrics import adjusted_rand_score
 from sklearn.decomposition import TruncatedSVD
@@ -30,8 +30,8 @@ SAMPLES = {'151507': 7,
 }
 
 hvgs = 5000
-n_latent = 15
-nhood_layers = 2
+n_latent = 5
+nhood_layers = 4
 
 aris = defaultdict(list)
 
@@ -61,10 +61,10 @@ for sample, n_clusters in SAMPLES.items():
         scvi.settings.seed = i 
         scvi.model.SCVI.setup_anndata(adata, layer="counts")
         model = scvi.model.SCVI(adata, n_latent=n_latent)
-        model.train(early_stopping=True)
+        model.train(early_stopping=True, plan_kwargs=dict(optimizer='AdamW', reduce_lr_on_plateau=True))
         adata.obsm['X_scVI'] = model.get_latent_representation(adata).astype(np.float32)
 
-        cc.tl.SpatialCluster.aggregate_neighbors(adata, nhood_layers, X_key='X_scVI')
+        cc.tl.SpatialCluster.aggregate_neighbors(adata, nhood_layers, X_key='X_scVI', out_key='X_cellcharter')
         
         cls = cc.tl.SpatialCluster(int(n_clusters), random_state=i, gpus=args.gpu)
         cls.fit(adata, X_key='X_cellcharter')
