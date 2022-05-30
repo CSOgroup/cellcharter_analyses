@@ -91,4 +91,4 @@ for sample, n_clusters in SAMPLES.items():
                 
 
                     aris_df = pd.DataFrame.from_dict(aris, orient='index')
-                    aris_df.to_csv(f"/work/FAC/FBM/DBC/gciriell/spacegene/Packages/cellcharter_analyses/results/dlpfc/CellCharter/tuning/ARI_tuning_{sample}_newhop.csv")
+                    aris_df.to_csv(f"/work/FAC/FBM/DBC/gciriell/spacegene/Packages/cellcharter_analyses/results/dlpfc/CellCharter/tuning/ARI_tuning_{sample}.csv")
