@@ -30,7 +30,7 @@ filter =  'svg'
 run = function(N_SAMPLES) {
 	sample_list = c()
 	for (name in names(samples)[1:N_SAMPLES]) {
-		sample_list = c(sample_list, as.Seurat(readRDS(paste('/scratch/mvarrone/', name, '.rds', sep=""))))
+		sample_list = c(sample_list, as.Seurat(readRDS(paste('../../../data/Visium_DLPFC/preprocessed_rds/', name, '.rds', sep=""))))
 	}
 
 	if (N_SAMPLES == 1) {
@@ -102,7 +102,7 @@ max_mem = memory_info[12]
 row = data.frame(max_mem, row.names=c(n_samples))
 
 
-mem_path = paste('/work/FAC/FBM/DBC/gciriell/spacegene/Packages/cellcharter_analyses/results/dlpfc/DR-SC/memory/memory_', filter, hvg, '.csv', sep='')
+mem_path = paste('../../../results/benchmarking/memory/memory_DR-SC_', filter, hvg, '.csv', sep='')
 
 
 if (!file.exists(mem_path)) {

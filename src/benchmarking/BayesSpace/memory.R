@@ -142,8 +142,7 @@ harmony_text = ''
 if (!is.null(harmony_key)) {
 	harmony_text = paste('_harmony-', harmony_key, sep="")
 }
-mem_path = paste('/work/FAC/FBM/DBC/gciriell/spacegene/Packages/cellcharter_analyses/results/dlpfc/BayesSpace/memory/memory_hvg', hvg, '_pc', pc, '_gamma', gamma, '_nrep', nrep, harmony_text, '.csv', sep='')
-
+mem_path = paste('../../../results/benchmarking/memory/memory_BayesSpace_hvg', hvg, '_pc', pc, '_gamma', gamma, '_nrep', nrep, harmony_text, '.csv', sep='')
 
 if (!file.exists(mem_path)) {
 	mems = row

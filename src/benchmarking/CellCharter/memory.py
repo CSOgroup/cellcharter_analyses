@@ -79,7 +79,7 @@ def run(n_samples):
 
 
 mem = max(memory_usage(proc=(run, [args.n_samples])))
-mems_path = f"/work/FAC/FBM/DBC/gciriell/spacegene/Packages/cellcharter_analyses/results/dlpfc/CellCharter/memory/memory_hvgs{hvgs}_nlatent{n_latent}_nhoodlayers{nhood_layers}_{'gpu' if args.gpu else 'cpu'}.csv"
+mems_path = f"../../../results/benchmarking/memory/memory_CellCharter_hvgs{hvgs}_nlatent{n_latent}_nhoodlayers{nhood_layers}_{'gpu' if args.gpu else 'cpu'}.csv"
 row = pd.DataFrame([mem], index=[args.n_samples], )
 if os.path.exists(mems_path):
     mems_df = pd.read_csv(mems_path, index_col=0)
