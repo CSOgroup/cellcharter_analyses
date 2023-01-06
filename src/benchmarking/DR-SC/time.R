@@ -28,7 +28,7 @@ filter =  'svg'
 
 sample_list = c()
 for (name in names(samples)[1:n_samples]) {
-    sample_list = c(sample_list, as.Seurat(readRDS(paste('/scratch/mvarrone/', name, '.rds', sep=""))))
+    sample_list = c(sample_list, as.Seurat(readRDS(paste('../../../data/Visium_DLPFC/preprocessed_rds/', name, '.rds', sep=""))))
 }
 
 if (n_samples == 1) {
@@ -83,7 +83,7 @@ sample$col[sample$sample_name == "151673"] =
 
 set.seed(12345)
 seeds = sample.int(32768, 10)
-time_path = paste('/work/FAC/FBM/DBC/gciriell/spacegene/Packages/cellcharter_analyses/results/dlpfc/DR-SC/time/time_', filter, hvg, '_cpu_ncpus', n_cpus,'.csv', sep='')
+time_path = paste('../../../results/benchmarking/time/time_DR-SC_', filter, hvg, '_cpu_ncpus', n_cpus,'.csv', sep='')
 for (i in seeds) {
     set.seed(i)
     start_hvg = Sys.time()

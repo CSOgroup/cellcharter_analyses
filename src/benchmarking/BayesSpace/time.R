@@ -51,7 +51,7 @@ gamma = 3
 
 sample_list = c()
 for (name in names(samples)[1:n_samples]) {
-	s = readRDS(paste('/scratch/mvarrone/', name, '.rds', sep=""))
+	s = readRDS(paste('../../../data/Visium_DLPFC/preprocessed_rds/', name, '.rds', sep=""))
 	s$group = groups[name]
 	rowData(s)$is.HVG = NULL 
 	sample_list = c(sample_list, s)
@@ -111,7 +111,7 @@ harmony_text = ''
 if (!is.null(harmony_key)) {
 	harmony_text = paste('_harmony-', harmony_key, sep="")
 }
-time_path = paste('/work/FAC/FBM/DBC/gciriell/spacegene/Packages/cellcharter_analyses/results/dlpfc/BayesSpace/time/time_hvg', hvg, '_pc', pc, '_gamma', gamma, '_nrep', nrep, harmony_text, '.csv', sep='')
+time_path = paste('../../../results/benchmarking/time/time_BayesSpace_hvg', hvg, '_pc', pc, '_gamma', gamma, '_nrep', nrep, harmony_text, '_ncpus', n_cpus,'.csv', sep='')
 
 set.seed(12345)
 seeds = sample.int(32768, 10)

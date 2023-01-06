@@ -11,12 +11,14 @@ import STAGATE_pyG
 from torch_geometric.loader import DataLoader
 from tqdm.auto import tqdm
 import torch.nn.functional as F
+import scvi
 
 parser = argparse.ArgumentParser(description='Process some integers.')
 parser.add_argument('--gpu',  type=int, default=0)
 parser.add_argument('--n_samples', type=int)
 parser.add_argument('--n_cpus', type=int)
 parser.add_argument('--run_index', type=int)
+parser.add_argument('--scvi', default=False, action='store_true')
 
 args = parser.parse_args()
 
@@ -34,6 +36,22 @@ SAMPLES = {'151507': 7,
            '151672': 5, 
 }
 
+GROUPS = {
+    '151507': 0, 
+    '151508': 0, 
+    '151509': 0, 
+    '151510': 0, 
+    '151669': 1, 
+    '151670': 1, 
+    '151671': 1, 
+    '151672': 1, 
+    '151673': 2, 
+    '151674': 2, 
+    '151675': 2, 
+    '151676': 2
+
+}
+
 
 hvgs=5000
 hidden_dim=1024
@@ -47,13 +65,14 @@ device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 times = defaultdict(list)
 
-times_path = f"/work/FAC/FBM/DBC/gciriell/spacegene/Packages/cellcharter_analyses/results/dlpfc/STAGATE/time/time__hvgs{hvgs}_hidden_dim{hidden_dim}_nlatent{n_latent}_{'gpu' if args.gpu else 'cpu'}_ncpus{args.n_cpus}.csv"
+times_path = f"../../../results/benchmarking/time/time_hvgs{hvgs}_hidden_dim{hidden_dim}_nlatent{n_latent}_{'gpu' if args.gpu else 'cpu'}_ncpus{args.n_cpus}.csv"
 
 adata_list = []
 for sample, n_clusters in SAMPLES.items():
-    input_dir = os.path.join('/work/FAC/FBM/DBC/gciriell/spacegene/Data/jhpce_human_pilot_10x', sample)
+    input_dir = '../../../data/Visium_DLPFC/preprocessed_h5ad/'
     adata = ad.read_h5ad(os.path.join(input_dir, f'{sample}.h5ad'))
     adata.obs['sample'] = [sample]*adata.shape[0]
+    adata.obs['group'] = [GROUPS[sample]]*adata.shape[0]
     adata.obs['layer_guess'] = pd.read_csv(f'{input_dir}/metadata.tsv', sep='\t').loc[adata.obs_names, 'layer_guess']
     adata_list.append(adata)
 
@@ -79,6 +98,34 @@ sc.pp.highly_variable_genes(
 sc.pp.normalize_total(adata, target_sum=1e4)
 sc.pp.log1p(adata)
 
+time_preprocess = time() - start_preprocess
+
+rng = np.random.default_rng(12345)
+seeds = rng.integers(low=0, high=32768, size=10)
+i = seeds[args.run_index]
+np.random.seed(i)
+torch.manual_seed(i)
+torch.cuda.manual_seed(i)
+scvi.settings.seed = i
+
+
+start_scvi = time()
+
+if args.scvi:
+    scvi.model.SCVI.setup_anndata(adata, layer="counts", batch_key="group")
+    model = scvi.model.SCVI(adata, n_latent=n_latent)
+    model.train(early_stopping=True)
+
+    adata= ad.AnnData(
+        X=model.get_latent_representation(adata).astype(np.float32), 
+        obs=adata.obs, 
+        obsm=adata.obsm, 
+        obsp=adata.obsp, 
+        uns=adata.uns)
+    
+time_scvi = time() - start_scvi
+
+start_preprocess = time()
 adata_list = [adata[adata.obs['sample'] == sample] for sample in adata.obs['sample'].unique()]
 
 for a in adata_list:
@@ -97,14 +144,7 @@ data = STAGATE_pyG.Transfer_pytorch_Data(adata)
 # batch_size=1 or 2
 loader = DataLoader(data_list, batch_size=1, shuffle=True)
 
-time_preprocess = time() - start_preprocess
-
-rng = np.random.default_rng(12345)
-seeds = rng.integers(low=0, high=32768, size=5)
-i = seeds[args.run_index]
-np.random.seed(i)
-torch.manual_seed(i)
-torch.cuda.manual_seed(i)
+time_preprocess += time() - start_preprocess
 
 start_stagate = time()
 
@@ -135,7 +175,7 @@ adata = STAGATE_pyG.mclust_R(adata, used_obsm='STAGATE', num_cluster=n_clusters)
 
 time_cls = time() - start_cls
 
-row = pd.DataFrame([[args.n_samples, time_preprocess, time_stagate, time_cls]], columns=['n_samples', 'preprocess', 'STAGATE', 'clustering'])
+row = pd.DataFrame([[args.n_samples, time_preprocess, time_scvi, time_stagate, time_cls]], columns=['n_samples', 'preprocess', 'scVI', 'STAGATE', 'clustering'])
 if os.path.exists(times_path):
     times_df = pd.read_csv(times_path, index_col=0)
     times_df = pd.concat((times_df, row))
