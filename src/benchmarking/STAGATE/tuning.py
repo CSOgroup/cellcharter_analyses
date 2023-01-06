@@ -1,18 +1,14 @@
 
 import os
-import anndata as ad
 from collections import defaultdict
 import scanpy as sc
 import pandas as pd
 import STAGATE_pyG
 from sklearn.metrics import adjusted_rand_score
 import numpy as np
-import torch
 
-os.environ['R_HOME'] = '/dcsrsoft/spack/hetre/v1.2/spack/opt/spack/linux-rhel8-zen2/gcc-9.3.0/r-4.0.5-ipkqr7imy7lxmyo2gfyhpccb3ooinj25/rlib/R'
-os.environ['R_USER'] = '/work/FAC/FBM/DBC/gciriell/spacegene/envs/stagate/lib/python3.9/site-packages/rpy2'
-
-
+os.environ['R_HOME'] = "" # path to R home
+os.environ['R_USER'] = "" # path to R user
 
 SAMPLES = {
     '151507': 7, 
@@ -32,8 +28,7 @@ print('Loading data...')
 
 for sample, n_clusters in SAMPLES.items():
     for hvg in hvgs:
-        input_dir = os.path.join('/work/FAC/FBM/DBC/gciriell/spacegene/Data/jhpce_human_pilot_10x', sample)
-        adata = ad.read_h5ad(f'/work/FAC/FBM/DBC/gciriell/spacegene/Data/jhpce_human_pilot_10x/{sample}.h5ad')
+        input_dir = os.path.join('../../../data/Visium_DLPFC/raw', sample)
 
         adata = sc.read_visium(path=input_dir)
         adata.var_names_make_unique()
@@ -71,7 +66,6 @@ for sample, n_clusters in SAMPLES.items():
                     ARI = adjusted_rand_score(obs_df['mclust'], obs_df['layer_guess'])
 
                     aris[f'{sample}_{hvg}_{hidden_dim}_{n_latent}'].append(ARI)
-                
 
                     aris_df = pd.DataFrame.from_dict(aris, orient='index')
-                    aris_df.to_csv(f"/work/FAC/FBM/DBC/gciriell/spacegene/Packages/cellcharter_analyses/results/dlpfc/STAGATE/ARI_tuning_{sample}.csv")
+                    aris_df.to_csv(f"../../../results/benchmarking/hyperparm_tuning/ARI_STAGATE_tuning_{sample}.csv")

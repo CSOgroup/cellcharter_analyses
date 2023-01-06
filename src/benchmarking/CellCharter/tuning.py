@@ -5,11 +5,8 @@ import pandas as pd
 import scanpy as sc
 import scvi
 import cellchart as cc
-from time import time
 from sklearn.metrics import adjusted_rand_score
-from sklearn.decomposition import TruncatedSVD
 import argparse
-import squidpy as sq
 
 parser = argparse.ArgumentParser(description='Process some integers.')
 parser.add_argument('--gpu',  type=int, default=0)
@@ -39,9 +36,7 @@ if args.sample is not None:
 
 for sample, n_clusters in SAMPLES.items():
     for hvg in hvgs:
-        adata = ad.read_h5ad(f'/work/FAC/FBM/DBC/gciriell/spacegene/Data/jhpce_human_pilot_10x/{sample}/{sample}.h5ad')
-
-        
+        adata = ad.read_h5ad(f'../../../data/Visium_DLPFC/preprocessed_h5ad/{sample}.h5ad')
 
         sc.pp.filter_genes(adata, min_counts=3)
         sc.pp.filter_cells(adata, min_counts=3)
@@ -57,15 +52,7 @@ for sample, n_clusters in SAMPLES.items():
             subset=True,
             layer="counts",
             flavor="seurat_v3",
-
         )
-
-        #sc.pp.filter_genes(adata, min_counts=100)
-        #sc.pp.calculate_qc_metrics(adata)
-
-        #genes = adata.var_names[adata.var.highly_variable]
-        #sq.gr.sepal(adata, max_neighs=6, genes=genes, n_jobs=1)
-        #adata = adata[:, adata.uns["sepal_score"].index].copy()
 
         for n_latent in n_latents:
             for nhood_dist in nhood_dists:
@@ -84,11 +71,9 @@ for sample, n_clusters in SAMPLES.items():
                     cls.fit(adata, X_key='X_cellcharter')
                     adata.obs['cluster_cellcharter'] = cls.predict(adata, X_key='X_cellcharter')
                     
-                    
                     ari = adjusted_rand_score(adata[~adata.obs['sce.layer_guess'].isna()].obs['sce.layer_guess'], adata[~adata.obs['sce.layer_guess'].isna()].obs['cluster_cellcharter'])
                     print('ARI:', ari)
                     aris[f'{sample}_{hvg}_{n_latent}_{nhood_dist}'].append(ari)
-                
 
                     aris_df = pd.DataFrame.from_dict(aris, orient='index')
-                    aris_df.to_csv(f"/work/FAC/FBM/DBC/gciriell/spacegene/Packages/cellcharter_analyses/results/dlpfc/CellCharter/tuning/ARI_tuning_{sample}.csv")
+                    aris_df.to_csv(f"../../../results/benchmarking/hyperparm_tuning/ARI_CellCharter_tuning_{sample}.csv")
