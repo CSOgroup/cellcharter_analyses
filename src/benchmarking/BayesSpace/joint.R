@@ -52,7 +52,7 @@ ARIs = list()
 
 sample_list = c()
 for (name in names(samples)) {
-    s = readRDS(paste('/scratch/mvarrone/', name, '.rds', sep=""))
+    s = readRDS(paste('../../../data/Visium_DLPFC/preprocessed_rds/', name, '.rds', sep=""))
     s$group = groups[name]
     rowData(s)$is.HVG = NULL 
     sample_list = c(sample_list, s)
@@ -126,7 +126,7 @@ for(i in seeds) {
 	}
 
     labels[[paste('cluster_', i, sep="")]] = sample$spatial.cluster
-    write.csv(labels, paste('/work/FAC/FBM/DBC/gciriell/spacegene/Packages/cellcharter_analyses/results/dlpfc/BayesSpace/labels/ARI_hvg', hvg, '_pc', pc, '_gamma', gamma, '_nrep', nrep, harmony_text, '_combined.csv', sep=""))
+    write.csv(labels, paste('../../../results/benchmarking/joint/labels_BayesSpace_hvg', hvg, '_pc', pc, '_gamma', gamma, '_nrep', nrep, harmony_text, '_joint.csv', sep=""))
 
     for (name in names(samples)) {
         sample_single = sample[, sample$sample_name == name]
@@ -137,6 +137,6 @@ for(i in seeds) {
         ARIs_sample[[name]] = ari
     }
 	ARIs = c(ARIs, ARIs_sample)
-	write.csv(as.data.frame(do.call(rbind, ARIs)), paste('/work/FAC/FBM/DBC/gciriell/spacegene/Packages/cellcharter_analyses/results/dlpfc/BayesSpace/accuracy/ARI_hvg', hvg, '_pc', pc, '_gamma', gamma, '_nrep', nrep, harmony_text, '_combined.csv', sep=""))
+	write.csv(as.data.frame(do.call(rbind, ARIs)), paste('../../../results/benchmarking/joint/ARI_BayesSpace_hvg', hvg, '_pc', pc, '_gamma', gamma, '_nrep', nrep, harmony_text, '_joint.csv', sep=""))
 }
 

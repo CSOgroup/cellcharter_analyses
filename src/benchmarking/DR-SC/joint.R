@@ -23,27 +23,9 @@ filter =  'svg'
 
 ARIs = list()
 sample_list = c()
-# for (name in names(samples)) {
-#     s = readRDS(paste('/scratch/mvarrone/', name, '.rds', sep=""))
-#     rowData(s)$is.HVG = NULL
-#     sample_list = c(sample_list, s)
-# }
-
-# sample = do.call(cbind, sample_list)
-
-# sample$row[sample$sample_name == "151674"] = 
-#   100 + sample$row[sample$sample_name == "151674"]
-# sample$col[sample$sample_name == "151675"] = 
-#   150 + sample$col[sample$sample_name == "151675"]
-# sample$row[sample$sample_name == "151676"] = 
-#   100 + sample$row[sample$sample_name == "151676"]
-# sample$col[sample$sample_name == "151676"] = 
-#   150 + sample$col[sample$sample_name == "151676"]
-
-# sample = as.Seurat(sample)
 
 for (name in names(samples)) {
-    sample_list = c(sample_list, as.Seurat(readRDS(paste('/scratch/mvarrone/', name, '.rds', sep=""))))
+    sample_list = c(sample_list, as.Seurat(readRDS(paste('../../../data/Visium_DLPFC/preprocessed_rds/', name, '.rds', sep=""))))
 }
 
 sample = merge(sample_list[[1]], y = sample_list[2:length(sample_list)], add.cell.ids = names(samples))
@@ -97,7 +79,7 @@ for(i in 1:10) {
     sample <- DR.SC(sample, K=7, platform = 'Visium', verbose=T)
 
     labels[[paste('cluster_', i, sep="")]] = Idents(sample)
-    write.csv(labels, paste('/work/FAC/FBM/DBC/gciriell/spacegene/Packages/cellcharter_analyses/results/dlpfc/DR-SC/labels/ARI_', filter, hvg, '_combined.csv', sep=""))
+    write.csv(labels, paste('../../../results/benchmarking/joint/labels_DR-SC_', filter, hvg, '_joint.csv', sep=""))
 
     for (name in names(samples)) {
         sample_single = sample[, sample$sample_name == name]
@@ -108,6 +90,6 @@ for(i in 1:10) {
         ARIs_sample[[name]] = ari
     }
 	ARIs = c(ARIs, ARIs_sample)
-	write.csv(as.data.frame(do.call(rbind, ARIs)), paste('/work/FAC/FBM/DBC/gciriell/spacegene/Packages/cellcharter_analyses/results/dlpfc/DR-SC/accuracy/ARI_', filter, hvg, '_combined.csv', sep=""))
+	write.csv(as.data.frame(do.call(rbind, ARIs)), paste('../../../results/benchmarking/joint/ARI_DR-SC_', filter, hvg, '_joint.csv', sep=""))
 }
 
