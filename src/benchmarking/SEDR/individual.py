@@ -40,10 +40,9 @@ device = 'cuda:0' if args.gpu else 'cpu'
 
 aris = defaultdict(list)
 for sample, n_clusters in SAMPLES.items():
-    input_dir = os.path.join('/work/FAC/FBM/DBC/gciriell/spacegene/Data/jhpce_human_pilot_10x', sample)
+    input_dir = os.path.join('../../../data/Visium_DLPFC/raw', sample)
     adata = load_ST_file(file_fold=input_dir, load_images=False)
     adata.var_names_make_unique()
-
 
     adata_X = adata_preprocess(adata, min_cells=5, pca_n_comps=params.cell_feat_dim)
     graph_dict = graph_construction(adata.obsm['spatial'], adata.shape[0], params)
@@ -84,4 +83,4 @@ for sample, n_clusters in SAMPLES.items():
     
         aris[sample].append(ari)
         aris_df = pd.DataFrame.from_dict(aris, orient='index')
-        aris_df.to_csv(f"/work/FAC/FBM/DBC/gciriell/spacegene/Packages/cellcharter_analyses/results/dlpfc/SEDR/accuracy/ARI_feat_hidden2{params.feat_hidden2}_gcn_hidden2{params.gcn_hidden2}_pc{params.cell_feat_dim}_{'gpu' if args.gpu else 'cpu'}.csv")
+        aris_df.to_csv(f"../../../results/benchmarking/individual/ARI_SEDR_feat_hidden2_{params.feat_hidden2}_gcn_hidden2_{params.gcn_hidden2}_pc{params.cell_feat_dim}_{'gpu' if args.gpu else 'cpu'}_individual.csv")

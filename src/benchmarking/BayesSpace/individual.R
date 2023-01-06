@@ -16,7 +16,7 @@ samples = c(
     "151676"= 7
 )
 
-nrep = 2000
+nrep = 5000
 hvg = 1000
 pc = 15
 gamma = 3
@@ -28,7 +28,7 @@ ARIs = list()
 for (name in names(samples)) {
     ARIs_sample = c()
 
-    sample = readRDS(paste('/scratch/mvarrone/', name, '.rds', sep=""))
+    sample = readRDS(paste('../../../data/Visium_DLPFC/preprocessed_rds/', name, '.rds', sep=""))
     dec <- scran::modelGeneVar(sample)
     top <- scran::getTopHVGs(dec, n = hvg)
 
@@ -47,6 +47,6 @@ for (name in names(samples)) {
         )
         ARIs_sample = c(ARIs_sample, ari)
         ARIs[[name]] = ARIs_sample
-        write.csv(as.data.frame(do.call(rbind, ARIs)), paste('/work/FAC/FBM/DBC/gciriell/spacegene/Packages/cellcharter_analyses/results/dlpfc/BayesSpace/accuracy/ARI_hvg', hvg, '_pc', pc, '_gamma', gamma, '_nrep', nrep, '.csv', sep=""))
+        write.csv(as.data.frame(do.call(rbind, ARIs)), paste('../../../results/benchmarking/individual/ARI_BayesSpace_hvg', hvg, '_pc', pc, '_gamma', gamma, '_nrep', nrep, '_individual.csv', sep=""))
     }
 }

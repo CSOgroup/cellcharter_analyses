@@ -1,17 +1,15 @@
 
 import os
 import argparse
-import anndata as ad
 from collections import defaultdict
 import scanpy as sc
 import pandas as pd
 import STAGATE_pyG
 from sklearn.metrics import adjusted_rand_score
 import numpy as np
-import torch
 
-os.environ['R_HOME'] = '/dcsrsoft/spack/hetre/v1.2/spack/opt/spack/linux-rhel8-zen2/gcc-9.3.0/r-4.0.5-ipkqr7imy7lxmyo2gfyhpccb3ooinj25/rlib/R'
-os.environ['R_USER'] = '/work/FAC/FBM/DBC/gciriell/spacegene/envs/stagate/lib/python3.9/site-packages/rpy2'
+os.environ['R_HOME'] = "" # path to R home
+os.environ['R_USER'] = "" # path to R user
 
 parser = argparse.ArgumentParser(description='Process some integers.')
 parser.add_argument('--gpu',  type=int, default=0)
@@ -40,8 +38,7 @@ n_latent=30
 aris = defaultdict(list)
 
 for sample, n_clusters in SAMPLES.items():
-    input_dir = os.path.join('/work/FAC/FBM/DBC/gciriell/spacegene/Data/jhpce_human_pilot_10x', sample)
-    adata = ad.read_h5ad(f'/work/FAC/FBM/DBC/gciriell/spacegene/Data/jhpce_human_pilot_10x/{sample}.h5ad')
+    input_dir = os.path.join('../../../data/Visium_DLPFC/raw', sample)
 
     adata = sc.read_visium(path=input_dir)
     adata.var_names_make_unique()
@@ -54,7 +51,6 @@ for sample, n_clusters in SAMPLES.items():
         subset=True,
         layer="counts",
         flavor="seurat_v3",
-
     )
 
     sc.pp.normalize_total(adata, target_sum=1e4)
@@ -63,7 +59,6 @@ for sample, n_clusters in SAMPLES.items():
     metadata = pd.read_csv(f'{input_dir}/metadata.tsv', sep='\t')
 
     adata.obs['layer_guess'] = metadata.loc[adata.obs_names, 'layer_guess']
-    
 
     STAGATE_pyG.Cal_Spatial_Net(adata, rad_cutoff=150)
     STAGATE_pyG.Stats_Spatial_Net(adata)
@@ -79,6 +74,6 @@ for sample, n_clusters in SAMPLES.items():
         
         aris[sample].append(ari)
         aris_df = pd.DataFrame.from_dict(aris, orient='index')
-        aris_df.to_csv(f"/work/FAC/FBM/DBC/gciriell/spacegene/Packages/cellcharter_analyses/results/dlpfc/STAGATE/accuracy/ARI_hvgs{hvgs}_hidden_dim{hidden_dim}_n_latent{n_latent}_{'gpu' if args.gpu else 'cpu'}.csv")
+        aris_df.to_csv(f"../../../results/benchmarking/individual/ARI_STAGATE_hvgs{hvgs}_hidden_dim{hidden_dim}_nlatent{n_latent}_{'gpu' if args.gpu else 'cpu'}_individual.csv")
 
     

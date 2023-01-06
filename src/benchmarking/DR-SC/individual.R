@@ -28,7 +28,7 @@ for (name in names(samples)) {
     ARIs_sample = c()
     
     for(i in seeds) {
-        sample = as.Seurat(readRDS(paste('/scratch/mvarrone/', name, '.rds', sep="")))
+        sample = as.Seurat(readRDS(paste('../../../data/Visium_DLPFC/preprocessed_rds/', name, '.rds', sep="")))
         sample = NormalizeData(sample, verbose = F)
 
         if (filter == 'hvg') {
@@ -47,6 +47,6 @@ for (name in names(samples)) {
         )
         ARIs_sample = c(ARIs_sample, ari)
         ARIs[[name]] = ARIs_sample
-        write.csv(t(as.data.frame(do.call(cbind, ARIs))), paste('/work/FAC/FBM/DBC/gciriell/spacegene/Packages/cellcharter_analyses/results/dlpfc/DR-SC/accuracy/ARI_', filter, hvg, '.csv', sep=""))
+        write.csv(t(as.data.frame(do.call(cbind, ARIs))), paste('../../../results/benchmarking/individual/ARI_DR-SC_', filter, hvg, '_individual.csv', sep=""))
     }
 }

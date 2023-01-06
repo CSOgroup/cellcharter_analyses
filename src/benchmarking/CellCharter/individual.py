@@ -5,9 +5,7 @@ import pandas as pd
 import scanpy as sc
 import scvi
 import cellchart as cc
-from time import time
 from sklearn.metrics import adjusted_rand_score
-from sklearn.decomposition import TruncatedSVD
 import argparse
 
 parser = argparse.ArgumentParser(description='Process some integers.')
@@ -36,7 +34,7 @@ nhood_layers = 4
 aris = defaultdict(list)
 
 for sample, n_clusters in SAMPLES.items():
-    adata = ad.read_h5ad(f'/work/FAC/FBM/DBC/gciriell/spacegene/Data/jhpce_human_pilot_10x/{sample}.h5ad')
+    adata = ad.read_h5ad(f'../../../data/Visium_DLPFC/preprocessed_h5ad/{sample}.h5ad')
 
     sc.pp.filter_genes(adata, min_counts=3)
     sc.pp.filter_cells(adata, min_counts=3)
@@ -75,4 +73,4 @@ for sample, n_clusters in SAMPLES.items():
     
 
         aris_df = pd.DataFrame.from_dict(aris, orient='index')
-        aris_df.to_csv(f"/work/FAC/FBM/DBC/gciriell/spacegene/Packages/cellcharter_analyses/results/dlpfc/CellCharter/accuracy/ARI_hvgs{hvgs}_nlatent{n_latent}_nhoodlayers{nhood_layers}_{'gpu' if args.gpu else 'cpu'}.csv")
+        aris_df.to_csv(f"../../../results/benchmarking/individual/ARI_CellCharter_hvgs{hvgs}_nlatent{n_latent}_nhoodlayers{nhood_layers}_{'gpu' if args.gpu else 'cpu'}_individual.csv")
