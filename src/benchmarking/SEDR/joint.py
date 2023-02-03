@@ -92,9 +92,6 @@ if args.scvi:
         flavor="seurat_v3",
 
     )
-
-    sc.pp.normalize_total(adata, target_sum=1e4)
-    sc.pp.log1p(adata)
 else:
     adata_X = adata_preprocess(adata, min_cells=5, pca_n_comps=params.cell_feat_dim)
 graph_dict = graph_construction(adata.obsm['spatial'], adata.shape[0], params)

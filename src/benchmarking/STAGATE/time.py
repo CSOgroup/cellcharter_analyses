@@ -65,11 +65,11 @@ device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 times = defaultdict(list)
 
-times_path = f"../../../results/benchmarking/time/time_hvgs{hvgs}_hidden_dim{hidden_dim}_nlatent{n_latent}_{'gpu' if args.gpu else 'cpu'}_ncpus{args.n_cpus}.csv"
+times_path = f"/work/FAC/FBM/DBC/gciriell/spacegene/Projects/cellcharter_analyses_v1/results/benchmarking/time/time_hvgs{hvgs}_hidden_dim{hidden_dim}_nlatent{n_latent}_{'gpu' if args.gpu else 'cpu'}_ncpus{args.n_cpus}.csv"
 
 adata_list = []
 for sample, n_clusters in SAMPLES.items():
-    input_dir = '../../../data/Visium_DLPFC/preprocessed_h5ad/'
+    input_dir = f'/work/FAC/FBM/DBC/gciriell/spacegene/Data/jhpce_human_pilot_10x/{sample}'
     adata = ad.read_h5ad(os.path.join(input_dir, f'{sample}.h5ad'))
     adata.obs['sample'] = [sample]*adata.shape[0]
     adata.obs['group'] = [GROUPS[sample]]*adata.shape[0]
