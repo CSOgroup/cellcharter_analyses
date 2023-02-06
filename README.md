@@ -10,4 +10,4 @@ The original data is accessible at https://github.com/LieberInstitute/spatialLIB
 ## Figures
 | Notebook                       | Figures         |
 |--------------------------------|-----------------|
-| benchmarking (ipynb, nbviewer) | 1f-h, 1j, S1b-d |
+| benchmarking ([GitHub](https://github.com/CSOgroup/cellcharter_analyses/blob/main/benchmarking.ipynb), [nbviewer](https://nbviewer.org/github/CSOgroup/cellcharter_analyses/blob/main/benchmarking.ipynb)) | 1f-h, 1j, S1b-d |
