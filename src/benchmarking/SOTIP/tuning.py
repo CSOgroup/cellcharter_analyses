@@ -78,7 +78,7 @@ if args.sample is not None:
 for sample, n_clusters in SAMPLES.items():
     rng = np.random.default_rng(12345)
     seeds = rng.integers(low=0, high=32768, size=5)
-    for i in seeds[2:]:
+    for i in seeds:
         np.random.seed(i)
         torch.manual_seed(i)
         for hvg in hvgs:
