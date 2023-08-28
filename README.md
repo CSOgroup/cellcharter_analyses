@@ -11,4 +11,4 @@ Code to reproduce the analyses of [CellCharter](https://www.biorxiv.org/content/
 |  CosMx Human NSCLC ([GitHub](https://github.com/CSOgroup/cellcharter_analyses/blob/main/cosmx_human_nsclc.ipynb), [nbviewer](https://nbviewer.org/github/CSOgroup/cellcharter_analyses/blob/main/cosmx_human_nsclc.ipynb)) | Figs. 3-4 |
 |  MERSCOPE Human Lung Cancer ([GitHub](https://github.com/CSOgroup/cellcharter_analyses/blob/main/merscope_human_lung_cancer.ipynb), [nbviewer](https://nbviewer.org/github/CSOgroup/cellcharter_analyses/blob/main/merscope_human_lung_cancer.ipynb)) | Fig. 4 |
 |  IMC Human Lung Cancer ([GitHub](https://github.com/CSOgroup/cellcharter_analyses/blob/main/imc_human_lung_cancer.ipynb), [nbviewer](https://nbviewer.org/github/CSOgroup/cellcharter_analyses/blob/main/imc_human_lung_cancer.ipynb)) | Fig. 4|
-|  RNA-seq LUAD datasets ([GitHub](https://github.com/CSOgroup/cellcharter_analyses/blob/main/hypoxia_neutrophils_bulkDatasets_analyses.R) | Fig. 4|
+|  RNA-seq LUAD datasets ([GitHub](https://github.com/CSOgroup/cellcharter_analyses/blob/main/hypoxia_neutrophils_bulkDatasets_analyses.R)) | Fig. 4|
