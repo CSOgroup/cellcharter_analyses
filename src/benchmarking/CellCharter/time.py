@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import scanpy as sc
 import scvi
-import cellchart as cc
+import cellcharter as cc
 from time import time
 import argparse
 import os
@@ -39,7 +39,7 @@ times_path = f"../../../results/benchmarking/time/time_CellCharter_hvgs{hvgs}_nl
 
 adata_list = []
 for sample, n_clusters in SAMPLES.items():
-    adata = ad.read_h5ad(f'../../../data/Visium_DLPFC/preprocessed_h5ad/{sample}.h5ad')
+    adata = ad.read_h5ad(f'../../../data/visium_human_dlpfc/preprocessed_h5ad/{sample}.h5ad')
     adata.obs['sample'] = [sample]*adata.shape[0]
     adata_list.append(adata)
 

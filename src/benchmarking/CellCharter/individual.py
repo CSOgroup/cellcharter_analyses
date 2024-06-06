@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import scanpy as sc
 import scvi
-import cellchart as cc
+import cellcharter as cc
 from sklearn.metrics import adjusted_rand_score
 import argparse
 
@@ -34,7 +34,7 @@ nhood_layers = 4
 aris = defaultdict(list)
 
 for sample, n_clusters in SAMPLES.items():
-    adata = ad.read_h5ad(f'../../../data/Visium_DLPFC/preprocessed_h5ad/{sample}.h5ad')
+    adata = ad.read_h5ad(f'../../../data/visium_human_dlpfc/preprocessed_h5ad/{sample}.h5ad')
 
     sc.pp.filter_genes(adata, min_counts=3)
     sc.pp.filter_cells(adata, min_counts=3)

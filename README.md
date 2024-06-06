@@ -13,6 +13,9 @@ Code to reproduce the analyses of [CellCharter](https://doi.org/10.1038/s41588-0
 |  IMC Human Lung Cancer ([GitHub](https://github.com/CSOgroup/cellcharter_analyses/blob/main/imc_human_lung_cancer.ipynb), [nbviewer](https://nbviewer.org/github/CSOgroup/cellcharter_analyses/blob/main/imc_human_lung_cancer.ipynb)) | Fig. 6|
 |  RNA-seq LUAD datasets ([GitHub](https://github.com/CSOgroup/cellcharter_analyses/blob/main/hypoxia_neutrophils_bulkDatasets_analyses.R)) | Fig. 6|
 
+## Data
+The datasets used are accessible in this [Figshare collection](https://figshare.com/collections/CellCharter_analyses/6414188) and must be placed (and eventually unzipped) in the respective directories inside the `data` directory.
+
 ## Installation
 1. Create a conda or pyenv environment
 2. Install Python < 3.11 and [PyTorch](https://pytorch.org) < 2.0.0. If you are planning to use a GPU, make sure to download and install the correct version of PyTorch first.

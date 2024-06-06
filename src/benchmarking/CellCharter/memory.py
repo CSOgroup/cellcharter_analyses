@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import scanpy as sc
 import scvi
-import cellchart as cc
+import cellcharter as cc
 from time import time
 from sklearn.metrics import adjusted_rand_score
 from sklearn.decomposition import TruncatedSVD
@@ -34,14 +34,32 @@ SAMPLES = {'151507': 7,
            '151676': 7
 }
 
+
+GROUPS = {
+    '151507': 0, 
+    '151508': 0, 
+    '151509': 0, 
+    '151510': 0, 
+    '151669': 1, 
+    '151670': 1, 
+    '151671': 1, 
+    '151672': 1, 
+    '151673': 2, 
+    '151674': 2, 
+    '151675': 2, 
+    '151676': 2
+
+}
+
 hvgs = 5000
 n_latent = 5
 nhood_layers = 4
 
 adata_list = []
 for sample, n_clusters in SAMPLES.items():
-    adata = ad.read_h5ad(f'/work/FAC/FBM/DBC/gciriell/spacegene/Data/jhpce_human_pilot_10x/{sample}/{sample}.h5ad')
+    adata = ad.read_h5ad(f'../../../data/visium_human_dlpfc/preprocessed_h5ad/{sample}.h5ad')
     adata.obs['sample'] = [sample]*adata.shape[0]
+    adata.obs['group'] = [GROUPS[sample]]*adata.shape[0]
     adata_list.append(adata)
 
 def run(n_samples):
